@@ -24,7 +24,7 @@ export default function ForgotPasswordPage() {
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1000))
       setIsSubmitted(true)
-    } catch (err) {
+    } catch {
       setError("Failed to send reset email. Please try again.")
     } finally {
       setIsLoading(false)
@@ -37,7 +37,7 @@ export default function ForgotPasswordPage() {
         <Card className="w-full max-w-md">
           <CardHeader className="space-y-1 text-center">
             <CardTitle className="text-2xl font-bold">Check your email</CardTitle>
-            <CardDescription>We've sent a password reset link to {email}</CardDescription>
+            <CardDescription>We&apos;ve sent a password reset link to {email}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="text-center">
@@ -45,7 +45,7 @@ export default function ForgotPasswordPage() {
                 <Mail className="h-6 w-6 text-green-600" />
               </div>
               <p className="text-sm text-muted-foreground">
-                Didn't receive the email? Check your spam folder or{" "}
+                Didn&apos;t receive the email? Check your spam folder or{" "}
                 <button onClick={() => setIsSubmitted(false)} className="text-primary hover:underline">
                   try again
                 </button>
@@ -71,7 +71,7 @@ export default function ForgotPasswordPage() {
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center">Forgot password?</CardTitle>
           <CardDescription className="text-center">
-            Enter your email address and we'll send you a link to reset your password
+            Enter your email address and we&apos;ll send you a link to reset your password
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">

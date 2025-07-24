@@ -6,7 +6,6 @@ import {
   BookOpen,
   Bot,
   Command,
-  Frame,
   GalleryVerticalEnd,
   Map,
   PieChart,

@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/sidebar"
 
 export function ThemeToggle() {
-  const { theme, setTheme, resolvedTheme } = useTheme()
+  const { theme, setTheme } = useTheme()
   const { isMobile } = useSidebar()
   const [mounted, setMounted] = React.useState(false)
 

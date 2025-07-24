@@ -75,9 +75,9 @@ const EditorContent = () => (
   <div className="flex flex-col gap-4 h-full">
     <h2 className="text-lg font-semibold">Code Editor</h2>
     <div className="flex-1 rounded-xl bg-slate-900 text-green-400 p-4 font-mono text-sm">
-      <div className="mb-2 text-gray-500">// main.tsx</div>
-      <div>import React from 'react'</div>
-      <div>import ReactDOM from 'react-dom/client'</div>
+      <div className="mb-2 text-gray-500">{"// main.tsx"}</div>
+      <div>import React from &apos;react&apos;</div>
+      <div>import ReactDOM from &apos;react-dom/client&apos;</div>
       <div className="mt-4">function App() {"{"}</div>
       <div className="ml-4">return (</div>
       <div className="ml-8">{'<div className="app">'}</div>
@@ -177,7 +177,7 @@ export function SplitPaneSystem({ className, contentTypes = defaultContentTypes 
   const [dragState, setDragState] = React.useState<DragState | null>(null)
   const containerRef = React.useRef<HTMLDivElement>(null)
 
-  const findNodeById = (node: PaneNode, id: PaneId): PaneNode | null => {
+  const findNodeById = React.useCallback((node: PaneNode, id: PaneId): PaneNode | null => {
     if (node.id === id) return node
     if (isSplit(node)) {
       for (const child of node.children) {
@@ -186,7 +186,7 @@ export function SplitPaneSystem({ className, contentTypes = defaultContentTypes 
       }
     }
     return null
-  }
+  }, [])
 
   const findParentOfNode = (node: PaneNode, targetId: PaneId): Split | null => {
     if (isSplit(node)) {
@@ -269,7 +269,7 @@ export function SplitPaneSystem({ className, contentTypes = defaultContentTypes 
         updateSplitSizes(dragState.splitId, newSizes)
       }
     },
-    [dragState, root],
+    [dragState, root, findNodeById],
   )
 
   const handleMouseUp = React.useCallback(() => {
@@ -291,7 +291,7 @@ export function SplitPaneSystem({ className, contentTypes = defaultContentTypes 
     }
   }, [dragState, handleMouseMove, handleMouseUp])
 
-  const splitPane = (paneId: PaneId, direction: SplitDirection) => {
+  const splitPane = (paneId: PaneId) => {
     setRoot((prevRoot) => {
       const cloneNode = (node: PaneNode): PaneNode => {
         if (isPane(node)) {
@@ -354,7 +354,7 @@ export function SplitPaneSystem({ className, contentTypes = defaultContentTypes 
       const parent = findParentOfNode(newRoot, paneId)
 
       if (!parent) {
-        // Can't close the root pane if it's the only one
+        // Cannot close the root pane if it is the only one
         if (isPane(newRoot)) return prevRoot
         return prevRoot
       }
@@ -452,7 +452,7 @@ export function SplitPaneSystem({ className, contentTypes = defaultContentTypes 
                       size="sm"
                       variant="ghost"
                       className="h-6 w-6 p-0"
-                      onClick={() => splitPane(node.id, "horizontal")}
+                      onClick={() => splitPane(node.id)}
                     >
                       <SquareSplitHorizontal className="h-3 w-3" />
                     </Button>

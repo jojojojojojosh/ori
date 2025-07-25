@@ -19,7 +19,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.className} theme-transition`}>
+
+      <body className={`${inter.className} theme-transition`} suppressHydrationWarning>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

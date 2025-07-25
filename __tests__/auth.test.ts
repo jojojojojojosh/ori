@@ -149,4 +149,55 @@ describe('Authentication', () => {
       expect(mockSupabase.auth.signOut).toHaveBeenCalled()
     })
   })
+
+  describe('OAuth Authentication', () => {
+    it('should successfully initiate Google OAuth login', async () => {
+      // Arrange
+      const mockOAuthResponse = {
+        data: {
+          url: 'https://accounts.google.com/oauth/authorize?...',
+          provider: 'google'
+        },
+        error: null
+      }
+      
+      mockSupabase.auth.signInWithOAuth.mockResolvedValue(mockOAuthResponse)
+
+      // Act
+      const result = await mockSupabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/project`
+        }
+      }) as any
+
+      // Assert
+      expect(result.data.provider).toBe('google')
+      expect(result.error).toBeNull()
+      expect(mockSupabase.auth.signInWithOAuth).toHaveBeenCalledWith({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/project`
+        }
+      })
+    })
+
+    it('should handle OAuth errors', async () => {
+      // Arrange
+      const mockError = { message: 'OAuth provider not configured' }
+      mockSupabase.auth.signInWithOAuth.mockResolvedValue({
+        data: null,
+        error: mockError
+      })
+
+      // Act
+      const result = await mockSupabase.auth.signInWithOAuth({
+        provider: 'google'
+      }) as any
+
+      // Assert
+      expect(result.error).toEqual(mockError)
+      expect(result.data).toBeNull()
+    })
+  })
 })

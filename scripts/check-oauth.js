@@ -95,7 +95,7 @@ async function checkOAuthConfiguration() {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: 'http://localhost:3000/project',
+        redirectTo: `${envVars.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/project`,
         skipBrowserRedirect: true // This prevents actual redirect in server environment
       }
     });
@@ -128,7 +128,7 @@ async function checkOAuthConfiguration() {
   if (allPassed) {
     console.log('\n🎉 OAuth is properly configured and working!');
     console.log('\n📝 Next steps:');
-    console.log('   1. Visit http://localhost:3000/test-oauth to test in browser');
+    console.log(`   1. Visit ${envVars.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/test-oauth to test in browser`);
     console.log('   2. Try logging in with Google OAuth');
   } else {
     console.log('\n⚠️  OAuth configuration issues detected.');

@@ -87,7 +87,7 @@ export default function SignupPage() {
 
     // Validation
     if (!formData.name.trim()) {
-      setError("Please enter your full name")
+      setError("Please enter your name")
       setIsLoading(false)
       return
     }
@@ -154,13 +154,13 @@ export default function SignupPage() {
 
           <form onSubmit={handleEmailSignup} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="name">Full Name</Label>
+              <Label htmlFor="name">Name</Label>
               <div className="relative">
                 <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
                   id="name"
                   type="text"
-                  placeholder="Enter your full name"
+                  placeholder="Enter your name"
                   value={formData.name}
                   onChange={(e) => handleInputChange("name", e.target.value)}
                   className="pl-10"

@@ -49,7 +49,7 @@ export default function TestOAuthPage() {
         <CardHeader>
           <CardTitle>OAuth Authentication Test</CardTitle>
           <CardDescription>
-            Test the Google OAuth integration to verify it's working properly.
+            Test the Google OAuth integration to verify it&apos;s working properly.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">

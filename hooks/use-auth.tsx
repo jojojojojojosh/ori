@@ -172,8 +172,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsLoading(true)
 
     try {
-      // Use environment variable for production URL, fallback to current origin
-      const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin
+      // For local development, always use the current origin
+      // For production, use the environment variable
+      const isLocalDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+      const baseUrl = isLocalDev ? window.location.origin : (process.env.NEXT_PUBLIC_SITE_URL || window.location.origin)
       
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',

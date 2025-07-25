@@ -62,6 +62,18 @@ Email/password authentication is enabled by default.
    - Add your Supabase redirect URL to authorized redirect URIs
    - Copy the Client ID and Client Secret to Supabase
 
+#### Configure OAuth Redirect URLs
+**IMPORTANT**: You must configure the correct redirect URLs for OAuth to work in production.
+
+1. Go to **Authentication** > **URL Configuration** in your Supabase dashboard
+2. Set the **Site URL** to your production domain (e.g., `https://yourdomain.com`)
+3. Add **Redirect URLs** for both development and production:
+   - Development: `http://localhost:3000/auth/callback`
+   - Production: `https://yourdomain.com/auth/callback`
+4. Save the configuration
+
+**Note**: The auth callback route (`/auth/callback`) is automatically created in your Next.js app to handle OAuth redirects.
+
 ### 6. Configure Email Settings (Optional)
 
 For production, you may want to configure custom email templates:
@@ -118,7 +130,13 @@ For production, you may want to configure custom email templates:
    - Check that your redirect URLs are correctly set
    - Ensure Google OAuth is enabled in Supabase
 
-4. **Database errors**
+4. **Redirecting to localhost in production**
+   - Check your Supabase **Authentication** > **URL Configuration**
+   - Ensure the Site URL is set to your production domain
+   - Verify that production redirect URLs are configured
+   - Make sure the `/auth/callback` route exists in your app
+
+5. **Database errors**
    - Verify that the SQL setup script ran successfully
    - Check the Supabase logs for detailed error messages
 

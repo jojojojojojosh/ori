@@ -25,6 +25,7 @@ export function LoginForm({
   const { login, loginWithGoogle } = useAuth()
   const searchParams = useSearchParams()
   const message = searchParams.get("message")
+  const authError = searchParams.get("error")
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
@@ -72,6 +73,13 @@ export function LoginForm({
               {message && (
                 <Alert>
                   <AlertDescription>{message}</AlertDescription>
+                </Alert>
+              )}
+              {authError === 'auth_callback_error' && (
+                <Alert variant="destructive">
+                  <AlertDescription>
+                    Authentication failed. Please try logging in again.
+                  </AlertDescription>
                 </Alert>
               )}
               {error && (

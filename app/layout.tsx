@@ -8,8 +8,8 @@ import { ThemeProvider } from "@/components/theme-provider"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Split Pane App",
-  description: "A modern split pane application with authentication and theming",
+  title: "Ori",
+  description: "AI Copilot based novel writing",
 }
 
 export default function RootLayout({
@@ -19,7 +19,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-
+      <head>
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+      </head>
       <body className={`${inter.className} theme-transition`} suppressHydrationWarning>
         <ThemeProvider
           attribute="class"

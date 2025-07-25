@@ -172,10 +172,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsLoading(true)
 
     try {
+      // Use environment variable for production URL, fallback to current origin
+      const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin
+      
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/project`,
+          redirectTo: `${baseUrl}/project`,
         },
       })
 

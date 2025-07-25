@@ -86,6 +86,18 @@ export default function SignupPage() {
     setError("")
 
     // Validation
+    if (!formData.name.trim()) {
+      setError("Please enter your full name")
+      setIsLoading(false)
+      return
+    }
+
+    if (!formData.email.trim()) {
+      setError("Please enter your email")
+      setIsLoading(false)
+      return
+    }
+
     if (formData.password !== formData.confirmPassword) {
       setError("Passwords do not match")
       setIsLoading(false)

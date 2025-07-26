@@ -28,6 +28,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = React.useState(true)
   const router = useRouter()
 
+  // Helper function to get environment-specific redirect path
+  const getRedirectPath = () => {
+    const isLocalDev = typeof window !== 'undefined' && 
+      (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    
+    if (isLocalDev) {
+      return process.env.NEXT_PUBLIC_DEV_REDIRECT_PATH || '/project'
+    } else {
+      return process.env.NEXT_PUBLIC_PROD_REDIRECT_PATH || '/dashboard'
+    }
+  }
+
+  // Helper function to get base URL for OAuth redirects
+  const getBaseUrl = () => {
+    const isLocalDev = typeof window !== 'undefined' && 
+      (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    
+    if (isLocalDev) {
+      return typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3001'
+    } else {
+      return process.env.NEXT_PUBLIC_SITE_URL || (typeof window !== 'undefined' ? window.location.origin : '')
+    }
+  }
+
   // Check for existing session on mount
   React.useEffect(() => {
     const checkAuth = async () => {
@@ -124,7 +148,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (data.user) {
         await fetchUserProfile(data.user)
-        router.push("/project")
+        router.push(getRedirectPath())
       }
     } catch (error) {
       throw new Error(error instanceof Error ? error.message : "Login failed")
@@ -155,7 +179,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // If email confirmation is required, user will be null until confirmed
         if (data.session) {
           await fetchUserProfile(data.user)
-          router.push("/project")
+          router.push(getRedirectPath())
         } else {
           // Email confirmation required
           router.push("/login?message=Check your email to confirm your account")
@@ -172,15 +196,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsLoading(true)
 
     try {
-      // For local development, always use the current origin
-      // For production, use the environment variable
-      const isLocalDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-      const baseUrl = isLocalDev ? window.location.origin : (process.env.NEXT_PUBLIC_SITE_URL || window.location.origin)
+      const baseUrl = getBaseUrl()
+      const redirectPath = getRedirectPath()
       
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${baseUrl}/auth/callback?next=/project`,
+          redirectTo: `${baseUrl}/auth/callback?next=${redirectPath}`,
           // Use PKCE flow for better security
           queryParams: {
             access_type: 'offline',

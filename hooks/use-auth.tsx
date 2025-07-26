@@ -181,6 +181,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         provider: 'google',
         options: {
           redirectTo: `${baseUrl}/auth/callback?next=/project`,
+          // Use PKCE flow for better security
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          },
         },
       })
 

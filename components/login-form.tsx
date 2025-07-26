@@ -75,10 +75,15 @@ export function LoginForm({
                   <AlertDescription>{message}</AlertDescription>
                 </Alert>
               )}
-              {authError === 'auth_callback_error' && (
+              {authError && (
                 <Alert variant="destructive">
                   <AlertDescription>
-                    Authentication failed. Please try logging in again.
+                    {authError === 'auth_callback_error' && 'Authentication callback failed. Please try logging in again.'}
+                    {authError === 'oauth_error' && `OAuth error: ${searchParams.get('message') || 'Unknown error'}`}
+                    {authError === 'auth_exchange_error' && `Authentication exchange failed: ${searchParams.get('message') || 'Unknown error'}`}
+                    {authError === 'auth_session_error' && `Session creation failed: ${searchParams.get('message') || 'Unknown error'}`}
+                    {!['auth_callback_error', 'oauth_error', 'auth_exchange_error', 'auth_session_error'].includes(authError) && 
+                      `Authentication error: ${authError}`}
                   </AlertDescription>
                 </Alert>
               )}

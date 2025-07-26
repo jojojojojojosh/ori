@@ -13,29 +13,64 @@ const path = require('path')
 function checkProductionConfig() {
   console.log('🔍 Checking production configuration...\n')
   
-  // Check if .env.local exists and contains localhost
+  let hasIssues = false
+  
+  // Check if .env.local exists and contains active localhost URL
   const envLocalPath = path.join(process.cwd(), '.env.local')
   if (fs.existsSync(envLocalPath)) {
     const envContent = fs.readFileSync(envLocalPath, 'utf8')
     
-    if (envContent.includes('NEXT_PUBLIC_SITE_URL=http://localhost')) {
+    // Check for uncommented localhost URL (this would be problematic)
+    const uncommentedLocalhostMatch = envContent.match(/^NEXT_PUBLIC_SITE_URL=http:\/\/localhost/m)
+    const commentedLocalhostMatch = envContent.match(/^# NEXT_PUBLIC_SITE_URL=http:\/\/localhost/m)
+    
+    if (uncommentedLocalhostMatch) {
       console.log('❌ CRITICAL ISSUE FOUND:')
       console.log('   NEXT_PUBLIC_SITE_URL is set to localhost in .env.local')
       console.log('   This will cause OAuth redirects to localhost in production!\n')
-      console.log('💡 SOLUTION:')
-      console.log('   Set NEXT_PUBLIC_SITE_URL=https://yourdomain.com in your production environment')
-      console.log('   Do NOT set it to localhost in production!\n')
-      return false
+      hasIssues = true
+    } else if (commentedLocalhostMatch) {
+      console.log('✅ .env.local: localhost URL is properly commented out')
     }
     
-    if (envContent.includes('NEXT_PUBLIC_SITE_URL=') && !envContent.includes('NEXT_PUBLIC_SITE_URL=\n')) {
-      const siteUrlMatch = envContent.match(/NEXT_PUBLIC_SITE_URL=(.+)/)
-      if (siteUrlMatch) {
-        console.log('✅ NEXT_PUBLIC_SITE_URL is configured:', siteUrlMatch[1])
+    // Check for any active NEXT_PUBLIC_SITE_URL in .env.local
+    const siteUrlMatch = envContent.match(/^NEXT_PUBLIC_SITE_URL=(.+)$/m)
+    if (siteUrlMatch) {
+      console.log('ℹ️  .env.local NEXT_PUBLIC_SITE_URL:', siteUrlMatch[1])
+    }
+  }
+  
+  // Check if .env.production exists with correct configuration
+  const envProdPath = path.join(process.cwd(), '.env.production')
+  if (fs.existsSync(envProdPath)) {
+    const envProdContent = fs.readFileSync(envProdPath, 'utf8')
+    const prodSiteUrlMatch = envProdContent.match(/^NEXT_PUBLIC_SITE_URL=(.+)$/m)
+    
+    if (prodSiteUrlMatch) {
+      const prodUrl = prodSiteUrlMatch[1]
+      console.log('✅ .env.production NEXT_PUBLIC_SITE_URL:', prodUrl)
+      
+      if (prodUrl.includes('localhost')) {
+        console.log('❌ Production environment should not use localhost!')
+        hasIssues = true
+      } else if (prodUrl.startsWith('https://')) {
+        console.log('✅ Production URL uses HTTPS')
+      } else {
+        console.log('⚠️  Production URL should use HTTPS')
       }
     } else {
-      console.log('ℹ️  NEXT_PUBLIC_SITE_URL is empty (OK for development)')
+      console.log('⚠️  .env.production exists but no NEXT_PUBLIC_SITE_URL found')
     }
+  } else {
+    console.log('ℹ️  No .env.production file found')
+  }
+  
+  if (hasIssues) {
+    console.log('\n💡 SOLUTION:')
+    console.log('   1. Comment out NEXT_PUBLIC_SITE_URL in .env.local')
+    console.log('   2. Set correct production URL in .env.production')
+    console.log('   3. Configure deployment platform environment variables')
+    console.log('   4. Update Supabase OAuth redirect URLs')
   }
   
   console.log('\n📋 Production Deployment Checklist:')
@@ -44,7 +79,7 @@ function checkProductionConfig() {
   console.log('   □ Configure OAuth redirect URLs in Supabase')
   console.log('   □ Verify /auth/callback route exists')
   
-  return true
+  return !hasIssues
 }
 
 if (require.main === module) {

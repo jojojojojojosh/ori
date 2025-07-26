@@ -4,7 +4,7 @@ This document explains how the application handles environment-specific redirect
 
 ## Implementation Overview
 
-The application now properly handles environment-specific redirects in the following components:
+The application now properly handl  es environment-specific redirects in the following components:
 
 ### 1. Authentication Hook (`hooks/use-auth.tsx`)
 

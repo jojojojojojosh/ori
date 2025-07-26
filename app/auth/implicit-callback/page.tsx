@@ -12,7 +12,20 @@ const supabase = createClient(
 function ImplicitCallbackContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const next = searchParams.get('next') || '/project'
+  
+  // Helper function to get environment-specific redirect path
+  const getRedirectPath = () => {
+    const isLocalEnv = typeof window !== 'undefined' && 
+      (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    
+    if (isLocalEnv) {
+      return process.env.NEXT_PUBLIC_DEV_REDIRECT_PATH || '/project'
+    } else {
+      return process.env.NEXT_PUBLIC_PROD_REDIRECT_PATH || '/dashboard'
+    }
+  }
+  
+  const next = searchParams.get('next') || getRedirectPath()
 
   useEffect(() => {
     const handleImplicitFlow = async () => {

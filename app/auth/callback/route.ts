@@ -1,12 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
+// Helper function to get environment-specific redirect path
+function getRedirectPath() {
+  const isLocalEnv = process.env.NODE_ENV === 'development'
+  
+  if (isLocalEnv) {
+    return process.env.NEXT_PUBLIC_DEV_REDIRECT_PATH || '/project'
+  } else {
+    return process.env.NEXT_PUBLIC_PROD_REDIRECT_PATH || '/dashboard'
+  }
+}
+
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get('code')
   const error = searchParams.get('error')
   // if "next" is in param, use it as the redirect URL
-  const next = searchParams.get('next') ?? '/project'
+  const next = searchParams.get('next') ?? getRedirectPath()
 
   // Handle OAuth errors
   if (error) {
